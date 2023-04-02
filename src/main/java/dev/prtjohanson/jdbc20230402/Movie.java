@@ -10,6 +10,7 @@ public class Movie {
     public Movie() {
 
     }
+     
     public Movie(ResultSet rs) {
         try {
             this
