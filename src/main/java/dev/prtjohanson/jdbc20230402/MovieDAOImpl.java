@@ -114,7 +114,7 @@ public class MovieDAOImpl implements MovieDAO {
     private void runQuery(String query) {
         try {
             Statement st = connection.createStatement();
-            st.executeUpdate(this.createTableQuery);
+            st.executeUpdate(query);
         } catch (SQLException e) {
             throw new DatabaseActionException(e.getMessage());
         }
