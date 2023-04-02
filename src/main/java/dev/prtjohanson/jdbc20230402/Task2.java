@@ -2,10 +2,7 @@ package dev.prtjohanson.jdbc20230402;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.EnumSet;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class Task2 {
@@ -21,6 +18,18 @@ public class Task2 {
     }
 
     public static void main(String[] args) {
+        final Map<String, Action> commandToAction = new TreeMap<>(Map.of(
+                "create table", Action.CREATE_TABLE,
+                "delete table", Action.DELETE_TABLE,
+                "add movie", Action.ADD_MOVIE,
+                "update movie", Action.UPDATE_MOVIE,
+                "delete movie", Action.DELETE_MOVIE,
+                "list all", Action.LIST_ALL,
+                "get", Action.GET,
+                "exit", Action.EXIT,
+                "quit", Action.EXIT
+        ));
+
         if (args.length < 5) {
             System.out.println(
                     "Please provide mysql server host, port, database name, database user and password."
@@ -44,16 +53,21 @@ public class Task2 {
                 )
         ) {
             while (true) {
-                MovieDAO movieDAO = new MovieDAOImpl(connection);
+                final MovieDAO movieDAO = new MovieDAOImpl(connection);
 
-                System.out.println("Available actions:");
+                System.out.println("Available commands:");
 
-                EnumSet.allOf(Action.class).forEach(action -> System.out.println(action));
+                commandToAction.keySet().stream().forEach(command -> System.out.println(command));
 
                 try {
                     System.out.println("Enter action: ");
-                    final String userActionString = (new Scanner(System.in)).nextLine().toUpperCase();
-                    final Action userAction = Action.valueOf(userActionString);
+                    final String command = (new Scanner(System.in)).nextLine().toLowerCase();
+
+                    if (!commandToAction.containsKey(command)) {
+                        throw new IllegalArgumentException();
+                    }
+
+                    final Action userAction = commandToAction.get(command);
 
                     switch (userAction) {
                         case CREATE_TABLE -> {
